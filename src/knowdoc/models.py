@@ -2,7 +2,17 @@ import uuid
 from datetime import UTC, datetime
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import JSON, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import (
+    JSON,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    LargeBinary,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -73,6 +83,12 @@ class Version(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
+class SourceFile(Base):
+    __tablename__ = "source_files"
+    version_id: Mapped[str] = mapped_column(ForeignKey("versions.id", ondelete="CASCADE"), primary_key=True)
+    content: Mapped[bytes] = mapped_column(LargeBinary)
+
+
 class Chunk(Base):
     __tablename__ = "chunks"
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
@@ -82,7 +98,7 @@ class Chunk(Base):
     text: Mapped[str] = mapped_column(Text)
     quote_hash: Mapped[str] = mapped_column(String(64))
     location: Mapped[dict] = mapped_column(JSON)
-    embedding: Mapped[list] = mapped_column(Vector())
+    embedding: Mapped[list | None] = mapped_column(Vector(), nullable=True)
     embedding_model: Mapped[str] = mapped_column(String(200))
     token_count: Mapped[int] = mapped_column(Integer)
     search_vector: Mapped[str | None] = mapped_column(TSVECTOR)

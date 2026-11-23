@@ -7,14 +7,14 @@ from sqlalchemy import and_, or_, select
 
 from knowdoc.config import settings
 from knowdoc.db import session
-from knowdoc.models import Chunk, Job, Version, now, uid
+from knowdoc.models import Chunk, Job, SourceFile, Version, now, uid
 from knowdoc.parsing import chunk_sections, parse
 from knowdoc.providers import embed, embedding_identity
 
 logger = logging.getLogger("knowdoc.worker")
 
 
-def claim():
+def claim(job_id=None):
     cfg = settings()
     with session() as db, db.begin():
         exhausted = db.scalars(select(Job).where(Job.status == "running", Job.lease_until < now(),
@@ -26,7 +26,8 @@ def claim():
                 version.status = "failed"
         job = db.scalar(select(Job).where(
             Job.attempts < cfg.max_attempts,
-            or_(Job.status == "queued", and_(Job.status == "running", Job.lease_until < now()))
+            or_(Job.status == "queued", and_(Job.status == "running", Job.lease_until < now())),
+            Job.id == job_id if job_id else True,
         ).order_by(Job.created_at).with_for_update(skip_locked=True).limit(1))
         if not job:
             return None
@@ -46,8 +47,8 @@ def heartbeat(job_id: str, token: str):
         job.lease_until = now() + timedelta(seconds=settings().job_lease_seconds)
 
 
-def process_one() -> bool:
-    claimed = claim()
+def process_one(job_id=None) -> bool:
+    claimed = claim(job_id)
     if not claimed:
         return False
     job_id, version_id, lease_token = claimed
@@ -55,12 +56,13 @@ def process_one() -> bool:
     try:
         with session() as db:
             version = db.get(Version, version_id)
-            content = (settings().storage_dir / version.id).read_bytes()
+            stored = db.get(SourceFile, version.id) if settings().source_storage == "database" else None
+            content = stored.content if stored else (settings().storage_dir / version.id).read_bytes()
             if hashlib.sha256(content).hexdigest() != version.checksum:
                 raise ValueError("source_checksum_mismatch")
             sections, warnings = parse(content, version.file_type, ocr=settings().ocr_enabled)
         pieces = list(chunk_sections(sections))
-        if len(pieces) > 5000:
+        if len(pieces) > settings().max_chunks:
             raise ValueError("chunk_limit_exceeded")
         parsed_at = time.perf_counter()
         generation = uid()
@@ -68,7 +70,7 @@ def process_one() -> bool:
         for offset in range(0, len(pieces), 8):
             heartbeat(job_id, lease_token)
             batch = pieces[offset:offset + 8]
-            vectors = embed([text for text, _, _ in batch])
+            vectors = embed([text for text, _, _ in batch]) if settings().embedding_backend != "disabled" else [None] * len(batch)
             for i, ((text, location, tokens), vector) in enumerate(zip(batch, vectors, strict=True)):
                 chunks.append(Chunk(version_id=version_id, generation=generation,
                                     ordinal=offset + i, text=text,

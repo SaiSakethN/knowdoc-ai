@@ -1,4 +1,5 @@
 import json
+import os
 from functools import lru_cache
 
 import httpx
@@ -9,6 +10,24 @@ from knowdoc.config import settings
 
 class ProviderError(RuntimeError):
     pass
+
+
+def gateway_request(endpoint, payload):
+    if not settings().allow_remote_provider:
+        raise ProviderError("remote_provider_disabled")
+    token = os.environ.get("AI_GATEWAY_API_KEY") or os.environ.get("VERCEL_OIDC_TOKEN")
+    if not token:
+        raise ProviderError("cloud_ai_not_configured")
+    try:
+        response = httpx.post("https://ai-gateway.vercel.sh/v1/" + endpoint,
+                              headers={"Authorization": "Bearer " + token}, json=payload,
+                              timeout=90, follow_redirects=False)
+        if response.status_code in {402, 403, 429}:
+            raise ProviderError("free_ai_credit_unavailable_or_rate_limited")
+        response.raise_for_status()
+        return response.json()
+    except (httpx.HTTPError, ValueError) as exc:
+        raise ProviderError("cloud_ai_unavailable") from exc
 
 
 @lru_cache
@@ -27,7 +46,11 @@ def embed(texts: list[str], *, purpose: str = "document") -> list[list[float]]:
     if cfg.embedding_model.startswith("nomic-embed-text"):
         prefix = "search_query: " if purpose == "query" else "search_document: "
         texts = [prefix + text for text in texts]
-    if cfg.embedding_backend == "sentence-transformers":
+    if cfg.embedding_backend == "gateway":
+        result = gateway_request("embeddings", {"model": cfg.embedding_model, "input": texts,
+                                                "dimensions": cfg.embedding_dim})
+        vectors = [row["embedding"] for row in sorted(result["data"], key=lambda row: row["index"])]
+    elif cfg.embedding_backend == "sentence-transformers":
         vectors = sentence_model().encode(texts, batch_size=8, normalize_embeddings=True).tolist()
     elif cfg.embedding_backend == "ollama":
         try:
@@ -103,6 +126,21 @@ def generate(question: str, passages: list[dict]) -> tuple[dict, dict]:
         }, "required": ["status", "claims"],
     }
     try:
+        if settings().generation_backend == "gateway":
+            result = gateway_request("chat/completions", {
+                "model": settings().generation_model, "temperature": 0, "max_tokens": 900,
+                "messages": [{"role": "system", "content": instruction},
+                             {"role": "user", "content": json.dumps({"question": question, "evidence": evidence})}],
+                "response_format": {"type": "json_schema", "json_schema": {
+                    "name": "grounded_answer", "strict": True, "schema": output_schema}},
+            })
+            candidate = json.loads(result["choices"][0]["message"]["content"])
+            for claim in candidate.get("claims", []):
+                claim["citation_ids"] = [aliases.get(cid, "invalid-model-citation") for cid in claim.get("citation_ids", [])]
+            usage = result.get("usage", {})
+            return candidate, {"input_tokens": usage.get("prompt_tokens"),
+                               "output_tokens": usage.get("completion_tokens"),
+                               "model": settings().generation_model}
         response = httpx.post(f"{settings().ollama_url}/api/generate", json={
             "model": settings().generation_model, "stream": False, "format": output_schema,
             "system": instruction,

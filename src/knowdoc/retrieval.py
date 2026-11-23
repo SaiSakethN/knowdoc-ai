@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from sqlalchemy import func, select
 
+from knowdoc.config import settings
 from knowdoc.facts import extract_profile_fact, profile_intent, profile_queries
 from knowdoc.models import Chunk, Document, Version
 from knowdoc.providers import embed, embedding_identity, rerank
@@ -38,6 +39,8 @@ def passage(row, score: float):
 def search(db, user_id: str, question: str, *, method="hybrid", top_k=6,
            collection_id=None, document_id=None, version_ids=None):
     started = time.perf_counter()
+    if settings().embedding_backend == "disabled":
+        method = "keyword"
     query = base_query(user_id, collection_id, document_id, version_ids)
     candidates: dict[str, dict] = {}
     lists = []

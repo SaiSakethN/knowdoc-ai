@@ -7,8 +7,16 @@
       "sha256": "7528d0f0ac03376474db44f7323b43a630381a62bf1bc3c76b7187df5e34cf66"
     },
     {
+      "path": ".vercelignore",
+      "sha256": "d58db6669dfabb451f7b99535939d48a0212c83cbf10c4fa3e5600b83d7ea101"
+    },
+    {
       "path": "Dockerfile",
       "sha256": "5966e8db4dc14a9193d0e9551d9e4788a003a53f4dea0a69a0c816b8389cd42f"
+    },
+    {
+      "path": "app.py",
+      "sha256": "d5b09132f56f0518e33ab958adce0835df3d7bbc8cf64ac891a64d924830a804"
     },
     {
       "path": "apps/web/package-lock.json",
@@ -32,15 +40,15 @@
     },
     {
       "path": "apps/web/src/api.ts",
-      "sha256": "2a133fb34ff6f73c96a3be7223834da928939ef96d4517f06920ce34b1e144ac"
+      "sha256": "c07581852b00c719eb34c9b6599ab52fce5f88252058979fe73e20f551072374"
     },
     {
       "path": "apps/web/src/main.tsx",
-      "sha256": "34f5ad6e43d8d4c97741b77610947445f7da2f5a5fcbb885109fd3abc6299b94"
+      "sha256": "29df32b3765f13be6d0edf2f63f80ea4f63bd3009849c53d5b34c22689a55ad0"
     },
     {
       "path": "apps/web/src/professional.css",
-      "sha256": "7b5179d213e6302e39ad45c90ecfbdbc8b2eca4f5f0eb135f8ac19064ad96d3b"
+      "sha256": "695a3e154f165c4d6a5c874043dc8a488a7a6042b0aeeba3d71d2f6bf4882cf1"
     },
     {
       "path": "apps/web/src/style.css",
@@ -56,7 +64,7 @@
     },
     {
       "path": "apps/web/tests/profile-answer.spec.ts",
-      "sha256": "16a4368222f07b362cab786bfd1ebcebf92a4069c4d78e8ac7ff006d64b12870"
+      "sha256": "7b1a659c997d6d8380072c7ff4e3783cbdf0186a427ae3faeac7075ac82ce058"
     },
     {
       "path": "apps/web/tests/workspace.spec.ts",
@@ -88,11 +96,15 @@
     },
     {
       "path": "migrations/versions/0001_initial.py",
-      "sha256": "115748be3001846cde14a549cfcbb758ec1cf9299078bab265a45f2627b3698d"
+      "sha256": "8354a106e476e2538412b433a6ffe1d35e0cb84dbd8ab1b5adfdc6521ea61f8e"
     },
     {
       "path": "migrations/versions/0002_evaluation_tasks.py",
       "sha256": "727fdd844840e2d23976101fe5e54de5ccc9fc5e3ae85d252beb1f3ce63c91b5"
+    },
+    {
+      "path": "migrations/versions/0003_cloud_storage.py",
+      "sha256": "2c6cd390778d1538000fffeec767009dc8f066e3db4af0a6b0fc75413d85014f"
     },
     {
       "path": "pyproject.toml",
@@ -167,6 +179,10 @@
       "sha256": "7be05f46b3b3cbf0807b6aaf7002c938a96c24fd76578064e225a09451d6247a"
     },
     {
+      "path": "scripts/verify_cloud.py",
+      "sha256": "fbb153b286db1062a49b6c289fa610015bce5470cc9fcea4cf0a39ea0b92ccd4"
+    },
+    {
       "path": "scripts/wait_index.py",
       "sha256": "70827a38838f4f29b159a1893bb1bf00e738a9df7b86d36b21b131a7a089ea8c"
     },
@@ -176,15 +192,15 @@
     },
     {
       "path": "src/knowdoc/answers.py",
-      "sha256": "d883d8c7301acd27bfa69b2da87196ee8d701155b6f939df84d0c18bf87fcb18"
+      "sha256": "c68b113eab41ea45f2726888bb652315302e8f2f26301169787c8d75cbc2763e"
     },
     {
       "path": "src/knowdoc/api.py",
-      "sha256": "01247fbe5f2bc69de980edec99bae9a48c78e47aec9d27d5e1d1376e2ae6e2a9"
+      "sha256": "b0f64c24d7624cb1567c17559a50cc10aaa0d244a2af464c2b07fee692dc89eb"
     },
     {
       "path": "src/knowdoc/config.py",
-      "sha256": "07c0fb530aba150e407ab5a381e30cbdaeb56bcb93ccd4b5f8d17694aaf13409"
+      "sha256": "97d270a790ca1e114f24c81180ee64539fedada7ada39ecdf25d93c10fdfec67"
     },
     {
       "path": "src/knowdoc/db.py",
@@ -204,7 +220,7 @@
     },
     {
       "path": "src/knowdoc/models.py",
-      "sha256": "09aa8cae9c1751c4d90121f747b984d6a9b977ecdd13645ce398cbe39384f819"
+      "sha256": "36d554a4c35f8aaec3599b7c1759065561f319a004548dfb04c78c478bff6587"
     },
     {
       "path": "src/knowdoc/parsing.py",
@@ -212,15 +228,15 @@
     },
     {
       "path": "src/knowdoc/providers.py",
-      "sha256": "111109b2568ab00758f9321517fc9694359ff1545dde4bcd0a814c77235caa7d"
+      "sha256": "5473e738b524d09b6a25c55f50b570e6d63412b6843f29638f47f64dbf1b6b10"
     },
     {
       "path": "src/knowdoc/retrieval.py",
-      "sha256": "dc369e4434670a732aae3c92b84acc0fb6644cf8836fbbb14aa1815a5c7837f1"
+      "sha256": "30e1aaa9e9c46d37e8d4fd6ef2712b263c78dfa792d09ab49f851eb1a2d8107d"
     },
     {
       "path": "src/knowdoc/schemas.py",
-      "sha256": "64b0f9d48f6813eeae00b32962623b995c17ec854b5b9978cf2e6c932169f68a"
+      "sha256": "f9eafc455b397cb90b12f288463b969763c53a0c29d7109c2a1d0e24cbc5db17"
     },
     {
       "path": "src/knowdoc/security.py",
@@ -228,7 +244,7 @@
     },
     {
       "path": "src/knowdoc/worker.py",
-      "sha256": "2028bef9b44c0a4067cc60983efd0b92c1f35a38b31a02be2a9e1b0a74a25368"
+      "sha256": "ef113cff856b02ca58bf62767412fe4be599314ee9ee8f2769ec3bd33ae363b5"
     },
     {
       "path": "tests/conftest.py",
@@ -237,6 +253,10 @@
     {
       "path": "tests/test_api_contract.py",
       "sha256": "450ec6e12ac37793a6861514988c37b496731a1d764dfa28999b34f283555017"
+    },
+    {
+      "path": "tests/test_cloud_mode.py",
+      "sha256": "69f2ce6f22b0bb51876668ed401203dbc382d5e2a4a67fe42914fc2416779ce3"
     },
     {
       "path": "tests/test_conflicts.py",
@@ -289,6 +309,10 @@
     {
       "path": "uv.lock",
       "sha256": "0d9c6c76c87e312e1318ff4a908c9f89b76de933c5228f99687b9760de279dc0"
+    },
+    {
+      "path": "vercel.json",
+      "sha256": "69c5754d2b55a77a2bcd0e27ce77bfcc16943f9115ec2d48267568bc72ad00b6"
     }
   ]
 }

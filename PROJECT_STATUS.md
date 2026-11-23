@@ -61,3 +61,8 @@ Recognizes current-company/employer and where-does-he-work questions; retrieves 
 
 ### Professional interface and public source release (2026-11-23)
 Replaced the dark navigation and green palette with a white workspace, indigo accents, a consistent book mark, quieter cards, revised account screens and responsive spacing. Starter prompts now fit general uploaded documents. Frontend build, Ruff and 36 backend tests pass; full desktop/mobile browser suite: 9 passed, 1 intentional skip. Sign-in and workspace screenshots were visually inspected using synthetic accounts. Public source excludes local credentials, private uploads, model weights and runtime data. Hosted launch is pending the deployment target.
+
+### Card-free Vercel release (2026-11-23)
+Live at https://knowdoc-ai.vercel.app. Vite and FastAPI deploy as Vercel Services; Neon Free stores indexed passages and permission-protected originals using a restricted runtime role. Existing local private uploads were not moved. Per user choice, generation and semantic embeddings are disabled because Gateway requires card verification. The cloud UI declares keyword retrieval and conservative exact profile answers; general questions receive passages with an explicit no-generation explanation. Limits: 3 MiB per file, 20 MiB of originals per account, 150 MiB globally, 200 chunks per source. No paid resources or AI credits were purchased. Frontend build/Ruff and 37 backend tests pass; production API smoke and two desktop/mobile browser flows pass. See docs/cloud-deployment.md.
+
+The complete local browser regression suite also passed after the cloud changes: 9 passed, 1 intentional skip. GitHub is connected to Vercel for future deployments.

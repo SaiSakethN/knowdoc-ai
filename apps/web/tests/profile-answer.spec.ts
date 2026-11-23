@@ -15,7 +15,7 @@ test('simple profile questions default to concise answers with one clickable ref
   await expect(page.getByRole('status')).toContainText('accepted');
   await page.getByRole('button', { name: 'Close upload' }).click();
   await expect(page.getByRole('button', { name: /Find the right guidance/ })).toBeVisible();
-  for (const [question, expected] of [['what is your name', 'Morgan Rivera.'], ['what is your current role', 'Data Engineer at Example Labs.']]) {
+  for (const [question, expected] of [['what is your name', 'Morgan Rivera.'], ['what is your current role', 'Data Engineer at Example Labs.'], ['what is your current company', 'Example Labs.']]) {
     await page.getByRole('textbox', { name: 'Ask a question' }).fill(question);
     await page.getByRole('button', { name: 'Send question' }).click();
     const message = page.locator('.message').last();

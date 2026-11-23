@@ -2,9 +2,13 @@
 
 **Clear answers from your documents, with sources you can inspect.**
 
+**[Open the live cloud demo](https://knowdoc-ai.vercel.app)** | [Cloud features and limits](docs/cloud-deployment.md)
+
+The card-free cloud edition offers keyword search, exact supported profile answers, and citations. General AI generation is disabled. Create a cloud account; existing local accounts and private uploads were not migrated.
+
 A local-first knowledge workspace for PDF, DOCX, Markdown and HTML. PostgreSQL full-text search and pgvector retrieval, optional CPU reranking, local Ollama generation, checksummed source versions, document permissions and resolvable citations.
 
-This is a portfolio implementation, not a claim of production deployment or guaranteed correctness. Citation integrity is separate from semantic support. Evaluation annotations remain provisional until human review.
+This is a portfolio implementation with a free-tier demonstration deployment, without a guarantee of correctness or production hardening. Citation integrity is separate from semantic support. Evaluation annotations remain provisional until human review.
 
 ![KnowDoc AI workspace](docs/screenshots/professional-workspace.png)
 
@@ -65,6 +69,6 @@ Integration tests use a UUID-named PostgreSQL schema, not truncated application 
 
 [Status](PROJECT_STATUS.md) · [Setup](docs/developer-setup.md) · [User guide](docs/user-guide.md) · [Architecture](docs/architecture/system-design.md) · [API](docs/api-guide.md) · [Security](docs/security-assessment.md) · [Verification](docs/verification-report.md) · [Runbook](docs/operations/runbook.md) · [Demonstration](docs/project-demonstration.md) · [Interview guide](docs/interview-preparation.md).
 
-Original code: MIT. PostgreSQL excerpts retain their notice. Model weights and dependencies have separate licenses; weights are not redistributed here. No hosted AI or public deployment was used.
+Original code: MIT. PostgreSQL excerpts retain their notice. Model weights and dependencies have separate licenses; weights are not redistributed here. The cloud demo uses Neon Free and Vercel; hosted AI is disabled. The local edition supports Ollama.
 
 [Expected behavior and acceptance checks](docs/acceptance-checklist.md).

@@ -83,7 +83,7 @@ class ConflictOutput(BaseModel):
 
 
 class AnswerOutput(BaseModel):
-    answer_method: Literal["extractive", "local_model", "evidence"] = "evidence"
+    answer_method: Literal["extractive", "local_model", "hosted_model", "evidence"] = "evidence"
     status: Literal["answered", "evidence_only", "insufficient_evidence", "conflicting_evidence", "clarification_required"]
     answer: str
     claims: list[ClaimOutput]

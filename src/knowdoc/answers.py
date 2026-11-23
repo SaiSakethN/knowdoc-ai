@@ -1,6 +1,7 @@
 import re
 import time
 
+from knowdoc.config import settings
 from knowdoc.facts import extract_profile_fact
 from knowdoc.providers import ProviderError, generate
 from knowdoc.retrieval import search
@@ -82,7 +83,7 @@ def answer(db, user_id, question, *, mode="generate", **filters):
         "their", "its", "have", "has", "had", "this", "that", "there", "here", "any", "use"}
     relevant = [p for p in passages if words & set(re.findall(r"[a-z][a-z0-9_]{2,}", p["text"].lower()))]
     response = {"status": "insufficient_evidence", "answer": "The available evidence is insufficient to answer this question.",
-                "answer_method": "evidence" if mode == "evidence" else "local_model",
+                "answer_method": "evidence" if mode == "evidence" else ("hosted_model" if settings().generation_backend == "gateway" else "local_model"),
                 "claims": [], "citations": [], "conflicts": [], "mode": mode, "usage": None,
                 "limitations": ["Retrieval relevance and semantic support are fallible.",
                                 "Version labels are declared source metadata; ingestion time does not prove currentness."],
@@ -112,6 +113,11 @@ def answer(db, user_id, question, *, mode="generate", **filters):
             response.update(status="evidence_only", answer="Relevant source passages are shown below. No generated answer was requested.",
                             citations=selected)
         else:
+            if settings().generation_backend == "disabled":
+                response.update(status="evidence_only", answer_method="evidence", citations=selected,
+                                answer="General AI answers are not enabled on this free deployment. These source passages may help; exact supported profile facts can still be answered directly.")
+                response["timings"]["total_ms"] = round((time.perf_counter() - started) * 1000, 2)
+                return response
             try:
                 candidate, usage = generate(question, selected)
                 response["usage"] = usage

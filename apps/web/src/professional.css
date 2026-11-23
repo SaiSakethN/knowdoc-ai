@@ -1,4 +1,5 @@
 /* Shared, restrained visual system across workspace, library and account screens. */
+.deployment-notice{padding:13px 16px;margin-bottom:22px;border:1px solid #dfdaf6;border-radius:9px;background:#f4f2fe;color:#665a94;font-size:.875rem;line-height:1.6}
 :root{color:#202536;background:#fafbfe;--ink:#202536;--subtle:#687188;--line:#e5e8f0;--accent:#5146d8;--tint:#efedff;--font-sans:Inter,"Segoe UI",system-ui,sans-serif}
 body{color:var(--ink);-webkit-font-smoothing:antialiased}
 h1{font-size:1.8rem;letter-spacing:-.06rem;font-weight:650}

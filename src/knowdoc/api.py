@@ -5,6 +5,7 @@ import time
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from pathlib import Path
+from urllib.parse import quote
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, Response, UploadFile
 from fastapi.exceptions import RequestValidationError
@@ -14,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy import delete, func, select, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from starlette.concurrency import run_in_threadpool
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from knowdoc.answers import answer
@@ -28,6 +30,7 @@ from knowdoc.models import (
     EvaluationTask,
     Grant,
     Job,
+    SourceFile,
     User,
     Version,
     uid,
@@ -61,7 +64,8 @@ rate_windows = defaultdict(deque)
 
 @asynccontextmanager
 async def lifespan(app):
-    settings().storage_dir.mkdir(parents=True, exist_ok=True)
+    if settings().source_storage == "local":
+        settings().storage_dir.mkdir(parents=True, exist_ok=True)
     yield
 
 
@@ -70,6 +74,14 @@ app.add_middleware(UploadBodyLimit)
 app.add_middleware(CORSMiddleware, allow_origins=[settings().web_origin],
                    allow_credentials=True, allow_methods=["GET", "POST", "DELETE"],
                    allow_headers=["Content-Type", "X-CSRF-Token"])
+
+
+@app.get("/api/v1/capabilities")
+def capabilities():
+    cfg = settings()
+    return {"cloud": cfg.cloud_mode, "generation": cfg.generation_backend,
+            "semantic_search": cfg.embedding_backend != "disabled",
+            "max_upload_bytes": cfg.max_upload_bytes}
 
 
 @app.middleware("http")
@@ -217,6 +229,14 @@ async def upload(collection_id: str = Form(...), label: str = Form("unversioned"
     except ParseError as exc:
         raise HTTPException(415, str(exc)) from exc
     checksum = hashlib.sha256(content).hexdigest()
+    if settings().cloud_mode:
+        # Serialize quota checks across function instances. Keep the free database
+        # bounded without relying on a per-process counter or fake vectors.
+        db.execute(text("SELECT pg_advisory_xact_lock(73658120)"))
+        total = db.scalar(select(func.coalesce(func.sum(Version.size), 0)))
+        owned = db.scalar(select(func.coalesce(func.sum(Version.size), 0)).join(Document).where(Document.owner_id == user.id))
+        if total + len(content) > 150 * 1024 * 1024 or owned + len(content) > 20 * 1024 * 1024:
+            raise HTTPException(413, "free_storage_limit_reached")
     if document_id:
         doc = require_document(db, user.id, document_id, owner=True)
         if doc.collection_id != collection.id:
@@ -246,15 +266,22 @@ async def upload(collection_id: str = Form(...), label: str = Form("unversioned"
         db.rollback()
         raise HTTPException(409, "version_label_already_exists") from None
     path = settings().storage_dir / version.id
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(content)
+    if settings().source_storage == "database":
+        db.add(SourceFile(version_id=version.id, content=content))
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
     job = Job(version_id=version.id)
     db.add(job)
     try:
         db.commit()
     except Exception:
-        path.unlink(missing_ok=True)
+        if settings().source_storage == "local":
+            path.unlink(missing_ok=True)
         raise
+    if settings().cloud_mode:
+        from knowdoc.worker import process_one
+        await run_in_threadpool(process_one, job.id)
     return {"document_id": doc.id, "version_id": version.id, "job_id": job.id, "status": "queued", "duplicate": False}
 
 
@@ -290,6 +317,12 @@ def original(version_id: str, user=Depends(current_user), db=Depends(get_db)):
     if not version:
         raise HTTPException(404, "version_not_found")
     require_document(db, user.id, version.document_id)
+    if settings().source_storage == "database":
+        stored = db.get(SourceFile, version.id)
+        if not stored:
+            raise HTTPException(404, "source_file_unavailable")
+        return Response(stored.content, media_type="application/octet-stream", headers={
+            "Content-Disposition": "attachment; filename*=UTF-8''" + quote(version.filename, safe="")})
     path = settings().storage_dir / version.id
     if not path.is_file():
         raise HTTPException(404, "source_file_unavailable")
@@ -317,7 +350,8 @@ def delete_document(document_id: str, user=Depends(current_user), db=Depends(get
     db.delete(doc)
     db.commit()  # Revoke and remove indexed text before raw storage cleanup.
     for version_id in ids:
-        (settings().storage_dir / version_id).unlink(missing_ok=True)
+        if settings().source_storage == "local":
+            (settings().storage_dir / version_id).unlink(missing_ok=True)
 
 
 @app.post("/api/v1/documents/{document_id}/grants", status_code=201)
@@ -367,6 +401,9 @@ def retry(job_id: str, user=Depends(current_user), db=Depends(get_db)):
         raise HTTPException(409, "job_not_failed")
     job.status, job.attempts, job.error = "queued", 0, None
     db.commit()
+    if settings().cloud_mode:
+        from knowdoc.worker import process_one
+        process_one(job.id)
     return {"id": job.id, "status": job.status}
 
 
@@ -382,6 +419,9 @@ def reindex(version_id: str, user=Depends(current_user), db=Depends(get_db)):
     job = Job(version_id=version_id)
     db.add(job)
     db.commit()
+    if settings().cloud_mode:
+        from knowdoc.worker import process_one
+        process_one(job.id)
     return {"job_id": job.id, "status": job.status}
 
 
@@ -436,6 +476,8 @@ def evaluation_runs(user=Depends(current_user), db=Depends(get_db)):
 
 @app.post("/api/v1/evaluations", status_code=202)
 def create_evaluation(user=Depends(current_user), db=Depends(get_db)):
+    if settings().cloud_mode:
+        raise HTTPException(403, "benchmarks_run_locally_to_preserve_free_quota")
     existing = db.scalar(select(EvaluationTask).where(EvaluationTask.owner_id == user.id, EvaluationTask.status.in_(["queued", "running"])))
     if existing:
         return {"task_id": existing.id, "status": existing.status}
