@@ -1,9 +1,10 @@
 flowchart TD
- User[Authenticated user] --> TLS[Future HTTPS ingress]
- TLS --> App[Web and API]
- App --> DB[(Private PostgreSQL)]
- App --> Objects[(Private object storage)]
- Worker[Private worker] --> DB
- Worker --> Objects
- App --> Inference[Approved private inference]
- Note[Unprovisioned and requires separate approval] -.-> TLS
+ User[Browser] --> Vercel[Vercel HTTPS routing]
+ Vercel --> Web[React and Vite]
+ Vercel --> API[FastAPI service]
+ API --> DB[(Neon Free PostgreSQL)]
+ DB --- Sources[Private originals and versioned passages]
+ API --> Index[Request-based keyword indexing]
+ Index --> DB
+ API --> Facts[Exact profile extraction and citation checks]
+ Note[General AI generation disabled] -.-> Facts

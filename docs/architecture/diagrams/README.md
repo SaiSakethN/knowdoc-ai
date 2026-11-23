@@ -1,6 +1,6 @@
 # Architecture diagrams
 
-Mermaid source files describe system context, components, ingestion, retrieval/generation, storage, permissions, versioning, evaluation, local deployment, optional cloud and failure recovery. Render these sources in a Mermaid-capable Markdown/editor tool. The optional cloud diagram is a proposal, not deployed infrastructure. The implemented security diagram uses application SQL predicates, not claimed RLS.
+Mermaid sources describe system context, components, ingestion, retrieval, storage, permissions, versioning, evaluation and recovery. Most describe the full local pipeline. The optional-cloud.mmd filename is retained for compatibility, but its contents now show the deployed Vercel/Neon topology. The security diagram uses application SQL predicates rather than RLS.
 
 - [context](context.mmd)
 

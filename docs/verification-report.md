@@ -1,5 +1,13 @@
 # Verification report
 
+## Current release: November 23, 2026
+
+Live deployment: https://knowdoc-ai.vercel.app. Ruff and the production frontend build pass. The backend suite has 37 passing tests; local desktop/mobile coverage has 9 passes and 1 intentional skip. Both production profile browser checks pass. The live API smoke covers upload/indexing, exact name/company answers, citations, originals, cross-account denial, sharing/revocation, reindexing, explicit no-AI fallback and deletion. All cloud checks used synthetic documents. See [cloud deployment](cloud-deployment.md).
+
+The records below retain earlier local measurements. Their counts and scope describe those runs.
+
+## Earlier local verification
+
 Updated 2026-11-22. Scope: a local user authenticates, uploads a document, waits for asynchronous indexing, queries authorized sources and opens the exact stored citation/original. Synthetic test accounts and public documentation were used; no private documents were sent to a hosted provider.
 
 | Boundary/check | Actual evidence |

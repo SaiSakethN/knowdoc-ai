@@ -1,6 +1,6 @@
 # KnowDoc AI project charter
 
-Prepared 2026-11-21; local scope subsequently approved by the user. This charter defines objectives and targets, not a claim that every release-quality gate has passed.
+Prepared 2026-11-21 for the original local implementation. This charter defines objectives and targets, not a claim that every release-quality gate has passed.
 
 KnowDoc AI will help engineers and technical support teams answer questions across evolving technical documents while exposing exact evidence, source versions, and uncertainty. It must not promise error-free answers or enterprise certification.
 

@@ -1,6 +1,6 @@
-# Implementation and approval plan
+# Implementation plan
 
-The user approved the proposed local corpus and architecture by asking to continue. Local implementation, tests and handoff are authorized; current outcomes and open quality gates are in PROJECT_STATUS.md.
+This plan records the original local implementation stages. Current capabilities and verification results are in the project status document.
 
 | Phase | Deliverable | Verification gate |
 |---|---|---|

@@ -1,23 +1,43 @@
 # KnowDoc AI
 
-**Clear answers from your documents, with sources you can inspect.**
+Document search and question answering with inspectable citations. Upload a source, ask a question, and open the passage behind the answer, including its version and PDF page.
 
-**[Open the live cloud demo](https://knowdoc-ai.vercel.app)** | [Cloud features and limits](docs/cloud-deployment.md)
+[Live demo](https://knowdoc-ai.vercel.app) | [Getting started](docs/user-guide.md) | [Architecture](docs/architecture/system-design.md) | [Evaluation results](docs/evaluation-report.md)
 
-The card-free cloud edition offers keyword search, exact supported profile answers, and citations. General AI generation is disabled. Create a cloud account; existing local accounts and private uploads were not migrated.
+![Company answer with its source passage open in KnowDoc AI](docs/screenshots/cloud-workspace.png)
 
-A local-first knowledge workspace for PDF, DOCX, Markdown and HTML. PostgreSQL full-text search and pgvector retrieval, optional CPU reranking, local Ollama generation, checksummed source versions, document permissions and resolvable citations.
+## What it does
 
-This is a portfolio implementation with a free-tier demonstration deployment, without a guarantee of correctness or production hardening. Citation integrity is separate from semantic support. Evaluation annotations remain provisional until human review.
+- Ingests PDF, DOCX, Markdown and HTML into private document collections.
+- Preserves checksummed source versions and the location of each indexed passage.
+- Returns short answers for supported profile facts, with clickable references.
+- Supports document sharing, access revocation, version comparison and reindexing.
+- Checks document access before retrieval and again before returning answers or resolving citations.
 
-![KnowDoc AI workspace](docs/screenshots/professional-workspace.png)
+The public demo runs on Vercel and Neon Free. Create an account and upload your own documents; local accounts and uploads are separate from the hosted app.
 
-## Start locally
+## Hosted and local editions
 
-Requirements: Python 3.12, uv, Node 24, Docker Desktop and local Ollama. No paid API is required. Close memory-heavy applications on a 16 GB laptop.
+| Capability | Public demo | Local installation |
+| --- | --- | --- |
+| Document storage | Private originals in PostgreSQL | Local files and PostgreSQL metadata |
+| Retrieval | PostgreSQL keyword search | Keyword, vector, hybrid and optional reranking |
+| Answers | Exact supported profile facts; source passages for other questions | Profile extraction and Ollama generation |
+| File limit | 3 MiB per file | 20 MiB per file by default |
+| Indexing | Runs during upload or reindex | Durable background worker |
+| OCR | Unavailable | Optional Poppler and Tesseract |
+| Evaluation | Results can be viewed; benchmark execution disabled | Reproducible local benchmark runs |
+
+General AI generation is disabled in the card-free demo. It does not send documents to an inference provider. The local edition runs Nomic embeddings and Gemma through Ollama. See [cloud limits and operations](docs/cloud-deployment.md).
+
+## Run locally
+
+Requirements: Python 3.12, uv, Node.js 24, Docker and Ollama. The optional reranker also needs the Python `ml` extra.
 
 ```powershell
-uv sync --frozen --extra dev --extra ml
+uv sync --frozen --extra dev
+ollama pull nomic-embed-text:latest
+ollama pull gemma:2b
 .venv/Scripts/python scripts/init_local.py
 docker compose up -d db
 .venv/Scripts/alembic upgrade head
@@ -26,49 +46,61 @@ npm ci --prefix apps/web
 npm --prefix apps/web run build
 ```
 
-In separate terminals:
+Run the API and worker in separate terminals:
 
 ```powershell
 .venv/Scripts/python -m uvicorn knowdoc.api:app --host 127.0.0.1 --port 8000
+```
+
+```powershell
 .venv/Scripts/python -m knowdoc.worker
 ```
 
-Open **http://127.0.0.1:8000/**. Register locally, create a collection, upload a file, wait for indexing and ask. Answer with sources is the default. Simple explicit profile facts can resolve directly from stored text; other questions use the local model. Evidence only is an optional, explicitly non-generative passage browser. The configured `nomic-embed-text:latest` and `gemma:2b` must already be available in Ollama; inspect their licenses before downloading or redistributing. Pin the embedding digest from local `/api/tags` in `.env` and reindex after model changes.
+Open http://127.0.0.1:8000. Pin the embedding model digest in `.env` before indexing sources. Setup details, model configuration and frontend development commands are in the [developer guide](docs/developer-setup.md).
 
-For frontend development: `npm --prefix apps/web run dev`, then **http://127.0.0.1:5173/**. Vite proxies `/api` to port 8000. Use the configured origin and `127.0.0.1`; localhost database resolution hung on the audited Windows machine.
+## Stack
 
-## Why it differs from a basic document chatbot
+React, TypeScript and Vite; FastAPI and SQLAlchemy; PostgreSQL full-text search and pgvector; Ollama for local inference. Alembic manages schema changes. Pytest covers backend behavior and permissions; Playwright covers desktop and mobile workflows.
 
-- Immutable source versions and parser-derived location metadata; historical citations survive reindexing.
-- SQL document permissions before reranking/generation and an authorization recheck after inference.
-- Durable leased jobs and atomic replacement indexes that preserve the previous search index on failure.
-- Four retrieval baselines and an 80-case provisional benchmark with actual failures.
-- Explicit abstention, user-selected evidence-only mode, and both sides of detected source conflicts. Deterministic conflict detection is currently limited to numeric-policy templates.
+```text
+apps/web/       React interface and browser tests
+src/knowdoc/    API, ingestion, retrieval, permissions and answers
+migrations/    Database migrations
+tests/         Backend tests
+scripts/       Setup, evaluation and verification tools
+evals/         Evaluation cases and synthetic fixtures
+configs/       Source, model and code manifests
+docs/          Setup, architecture, operations and measured results
+```
 
-## Corpus, evaluation and tests
-
-The approved corpus contains 24 official PostgreSQL HTML pages from release documentation archives for 18.7 and 19.0. [Manifest](configs/source-manifest.json), notices and exact hashes preserve provenance. Raw archives/private uploads stay out of Git. Original policy/injection fixtures are clearly fictional.
+## Verification
 
 ```powershell
-.venv/Scripts/python scripts/fetch_corpus.py
-.venv/Scripts/python scripts/import_corpus.py your-local-account@example.com
-.venv/Scripts/python scripts/seed_evaluation.py your-local-account@example.com
-.venv/Scripts/python scripts/wait_index.py
-.venv/Scripts/python scripts/evaluate.py your-local-account@example.com --generation-limit 5
 .venv/Scripts/ruff check src tests scripts migrations
-.venv/Scripts/pytest -q
+.venv/Scripts/python -m pytest -q
 npm --prefix apps/web run build
+```
+
+With the API and worker running:
+
+```powershell
 cd apps/web
 npx playwright install chromium
 npx playwright test
 ```
 
-Integration tests use a UUID-named PostgreSQL schema, not truncated application tables. Fake embeddings exist only in tests and are never reported as semantic benchmarks. Browser tests use isolated synthetic accounts. Real-corpus measurements use real local inference. [Read methodology and results](docs/evaluation-report.md).
+Latest release checks: **37 backend tests passed**, **9 local browser checks passed**, and **2 production browser checks passed**. One desktop-only evaluation screenshot check is intentionally skipped on mobile. A separate live API smoke test covers upload, citation resolution, original download, sharing, revocation, reindexing and deletion.
+
+The local retrieval benchmark uses 24 PostgreSQL documentation pages and 80 developer-authored cases. Results are exploratory: annotations have not had independent review. Citation validation confirms stored references and quotes, not whether every claim is correct. See [evaluation methodology and failures](docs/evaluation-report.md) and [security limits](docs/security-assessment.md).
 
 ## Documentation
 
-[Status](PROJECT_STATUS.md) · [Setup](docs/developer-setup.md) · [User guide](docs/user-guide.md) · [Architecture](docs/architecture/system-design.md) · [API](docs/api-guide.md) · [Security](docs/security-assessment.md) · [Verification](docs/verification-report.md) · [Runbook](docs/operations/runbook.md) · [Demonstration](docs/project-demonstration.md) · [Interview guide](docs/interview-preparation.md).
+- [User guide](docs/user-guide.md) and [acceptance checks](docs/acceptance-checklist.md)
+- [Developer setup](docs/developer-setup.md) and [API reference](docs/api-guide.md)
+- [System design](docs/architecture/system-design.md) and [deployment architecture](docs/architecture/deployment.md)
+- [Cloud deployment](docs/cloud-deployment.md) and [operations runbook](docs/operations/runbook.md)
+- [Current status](PROJECT_STATUS.md) and [verification record](docs/verification-report.md)
 
-Original code: MIT. PostgreSQL excerpts retain their notice. Model weights and dependencies have separate licenses; weights are not redistributed here. The cloud demo uses Neon Free and Vercel; hosted AI is disabled. The local edition supports Ollama.
+## License
 
-[Expected behavior and acceptance checks](docs/acceptance-checklist.md).
+Original code is licensed under [MIT](LICENSE). PostgreSQL excerpts and third-party dependencies retain their own terms; see [third-party notices](THIRD_PARTY_NOTICES.md). Model weights, private uploads, credentials and runtime data are not included in this repository.

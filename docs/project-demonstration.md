@@ -1,4 +1,8 @@
-# Demonstration and portfolio narrative
+# Feature walkthrough
+
+The hosted app is available at https://knowdoc-ai.vercel.app. Create an account, add a collection and upload a short synthetic profile. Ask for its name or current company, then open the reference and inspect the stored passage. Try a general question to see the source-search fallback and explicit no-generation notice. Sharing and revocation can be checked with a second test account. See [cloud limits](cloud-deployment.md).
+
+The walkthrough below covers the full local edition, including generation and evaluation features that are disabled in the hosted app.
 
 Use synthetic local accounts/public documents. Never display private uploads, credentials or unrelated user tabs.
 
@@ -6,7 +10,7 @@ Use synthetic local accounts/public documents. Never display private uploads, cr
 
 1. Show a real ready ingestion job and two declared source versions.
 2. Retrieve full-text-index guidance in Evidence only mode and open the exact passage/version.
-3. Select Local AI answer; show valid output or honest abstention, explaining that references do not prove correctness.
+3. Select Answer with sources; inspect valid output or an abstention. References identify evidence but do not independently prove correctness.
 4. Compare source versions. Equal guidance is legitimate; do not invent changes.
 5. Demonstrate opposing original 30/90-day retention fixtures, clearly labelled fictional.
 6. Open an actual evaluation run and explain metrics, failures and the pending human-review gate.

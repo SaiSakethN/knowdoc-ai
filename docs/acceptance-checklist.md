@@ -1,6 +1,6 @@
 # Expected behavior and how to check it
 
-Open http://127.0.0.1:8000/ and refresh after an update. Ask new questions; earlier responses are historical and are not rewritten. Select the intended collection or document version when more than one source could answer.
+Open https://knowdoc-ai.vercel.app or the local app at http://127.0.0.1:8000/. Select the intended collection or source version when several documents could answer. The hosted edition supports keyword search and exact profile extraction; general questions return passages with a clear no-generation message. The local edition also supports Ollama generation.
 
 | Check | Expected result | How to verify |
 |---|---|---|

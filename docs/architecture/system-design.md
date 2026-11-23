@@ -1,4 +1,6 @@
-# Implemented system design
+# System design
+
+The local pipeline below uses the background worker and Ollama. The hosted edition uses database-backed originals, request-based keyword indexing and exact profile extraction, with general generation disabled. See [deployment architecture](deployment.md) for both configurations.
 
 `src/knowdoc` contains FastAPI endpoints, PostgreSQL models, security predicates, parsers, provider adapters, jobs, retrieval, grounding and evaluation. `apps/web` is React/TypeScript/Vite with Tailwind and ordinary CSS. Migrations, tests and explicit operator scripts are version controlled.
 

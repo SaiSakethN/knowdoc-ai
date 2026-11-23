@@ -9,6 +9,6 @@
 
 Publisher references: [Nomic](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5), [cross-encoder](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2), [MiniLM alternative](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2), [Gemma terms](https://ai.google.dev/gemma/terms). Review exact artifact licenses before redistribution; weights are not included in this repository or image.
 
-The provider adapter rejects nonlocal hosts by default and follows no redirects. An operator remote flag is not blanket consent to send private documents. No hosted provider/key was used. Local API charge is zero, while hardware/storage/electricity still cost resources.
+The local provider adapter rejects nonlocal hosts by default and follows no redirects. Enabling a remote provider is not blanket consent to transmit private documents. The hosted edition disables inference; synthetic Gateway availability probes were rejected because card verification was incomplete. Local inference has no API charge, although hardware, storage and electricity still consume resources.
 
 Context selection uses a character budget and estimated word counts, not exact tokenizer accounting. Context loss, English-domain bias, OCR/layout errors, unsupported statements with valid quotes, and incomplete contradiction detection remain risks. Semantic faithfulness requires separate reviewed evaluation.

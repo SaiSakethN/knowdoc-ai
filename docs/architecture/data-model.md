@@ -1,5 +1,7 @@
 # Storage model
 
+In the hosted edition, source_files stores private original bytes by version ID, with cascading deletion and permission-checked API reads. Keyword-only chunks have null embeddings; no placeholder vectors are used. Cloud byte quotas are checked under a PostgreSQL advisory transaction lock before accepting source bytes. The remaining identities and version relationships are shared with the local edition.
+
 Users own collections and logical documents; explicit document grants add read access. Immutable versions store labels, byte checksums, original names, format/size, status, provenance, warnings and active index-generation ID. Duplicate bytes within a document are idempotent; changed bytes with the same label return conflict. Collection-level duplicate detection is owner scoped.
 
 Chunks also serve as citation passages, avoiding a redundant passage table. Each stores version/generation IDs, ordinal, exact normalized substring, quote SHA-256, location JSON, estimated word count, embedding identity/vector and tsvector. Location is a real PDF page or section/block plus normalized section offsets. DOCX pages and original byte offsets are never invented. Word counts are estimates, not exact tokenizer accounting.

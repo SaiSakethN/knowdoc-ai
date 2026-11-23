@@ -1,6 +1,6 @@
 # Business requirements
 
-Engineers and technical support teams need to locate version-appropriate guidance and inspect why an answer was produced. The main workflow is collection creation → multi-format upload → asynchronous status → filtered retrieval/answer → exact source passage → comparison across versions. The [charter](../PROJECT_CHARTER.md) defines measurable acceptance targets; these are not achieved guarantees.
+Engineers and technical support teams need to locate version-appropriate guidance and inspect why an answer was produced. The main workflow is collection creation → multi-format upload → asynchronous status → filtered retrieval/answer → exact source passage → comparison across versions. The [charter](planning/PROJECT_CHARTER.md) defines measurable acceptance targets; these are not achieved guarantees.
 
 | Workflow | Implementation | Evidence |
 |---|---|---|
@@ -14,4 +14,4 @@ Engineers and technical support teams need to locate version-appropriate guidanc
 | Uncertainty/conflicts | Explicit evidence mode, abstention, quote validation, numeric-policy conflict detector | Citation/injection/conflict tests; model quality measured separately |
 | Evaluation/operations | Persisted runs, background tasks, counts and timings | 80 provisional cases; operational status and health endpoints |
 
-Nonfunctional boundaries: loopback-only exposure, no hosted provider by default, no document bodies in routine logs, bounded CPU concurrency, labelled controls/focus handling, and honest loading/error/empty states. Public internet exposure needs additional hardening and separate approval. Formal accessibility and enterprise security certification are outside current claims.
+The local edition binds to loopback and uses local inference. The hosted edition uses HTTPS, restricted cloud credentials, durable private originals, request-based indexing and bounded storage. Both avoid document bodies in routine logs and enforce document access before returning source text. Distributed request limiting, stronger parser containment and a complete restore drill remain open work. See the cloud guide for the current feature limits.

@@ -1,5 +1,7 @@
 # API guide
 
+The hosted API uses https://knowdoc-ai.vercel.app/api/v1. Uploads are limited to 3 MiB and index within the request. Keyword retrieval and supported profile extraction are enabled; general questions return source passages with an explicit no-generation explanation. Benchmark task creation is disabled. GET /api/v1/capabilities reports edition, provider state, retrieval support and upload size. Originals are durable private database bytes. See [cloud limits](cloud-deployment.md).
+
 OpenAPI UI: `http://127.0.0.1:8000/docs`; schema: `/openapi.json`. Prefix `/api/v1`.
 
 Register/login via `POST /sessions/register` or `/sessions/login` with email/password JSON. HttpOnly cookie is set and response returns csrf_token; send it as X-CSRF-Token on authenticated mutations. GET /sessions/me restores the token; DELETE /sessions/current signs out. Unauthenticated private calls return 401; unauthorized object lookups use 404.
