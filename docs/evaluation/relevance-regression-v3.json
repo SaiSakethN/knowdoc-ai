@@ -1,0 +1,21 @@
+{
+  "question": "Which restaurant serves the best sushi in Boston?",
+  "output": {
+    "status": "insufficient_evidence",
+    "answer": "The available evidence is insufficient to answer this question.",
+    "claims": [],
+    "citations": [],
+    "conflicts": [],
+    "mode": "generate",
+    "usage": null,
+    "limitations": [
+      "Retrieval relevance and semantic support are fallible.",
+      "Version labels are declared source metadata; ingestion time does not prove currentness."
+    ],
+    "timings": {
+      "retrieval_ms": 1129.31,
+      "total_ms": 1129.74
+    }
+  },
+  "change": "Exclude generic question adjectives/function words from lexical grounding gate. One focused regression, not a full quality rerun."
+}

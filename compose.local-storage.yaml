@@ -1,0 +1,13 @@
+# Use only when switching the same local database from host processes to containers.
+# Stop host API/worker first. Preserve the same source storage for existing citations.
+services:
+  api:
+    volumes:
+      - type: bind
+        source: ./data/uploads
+        target: /app/data/uploads
+  worker:
+    volumes:
+      - type: bind
+        source: ./data/uploads
+        target: /app/data/uploads

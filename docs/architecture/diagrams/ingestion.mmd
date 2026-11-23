@@ -1,0 +1,13 @@
+sequenceDiagram
+ participant U as User
+ participant A as API
+ participant D as Database
+ participant W as Worker
+ U->>A: Authorized bounded file upload
+ A->>A: Validate bytes and compute SHA-256
+ A->>D: Version plus queued job
+ A-->>U: 202 job ID
+ W->>D: Claim lease and fencing token
+ W->>W: Verify parse chunk embed
+ W->>D: Commit chunks and switch active generation
+ W->>D: Mark ready and save timings

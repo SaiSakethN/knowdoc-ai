@@ -1,0 +1,13 @@
+flowchart TD
+ Job[Queued ingestion] --> Lease[Claim leased job]
+ Lease --> Process[Parse and embed]
+ Process --> Success[Atomic active-generation switch]
+ Process --> Failure[Classified failure]
+ Failure --> Retain[Keep previous active index]
+ Retain --> Retry[Owner retries after fixing cause]
+ Retry --> Job
+ Lease --> Crash[Worker crash or lost lease]
+ Crash --> Attempts{Attempts remain}
+ Attempts -->|yes| Job
+ Attempts -->|no| Failed[Persist failed state]
+ Source[Raw file and DB mismatch] --> Check[Read-only consistency report]

@@ -1,0 +1,11 @@
+erDiagram
+ USER ||--o{ COLLECTION : owns
+ USER ||--o{ DOCUMENT_GRANT : receives
+ COLLECTION ||--o{ DOCUMENT : contains
+ DOCUMENT ||--o{ DOCUMENT_GRANT : allows
+ DOCUMENT ||--o{ VERSION : preserves
+ VERSION ||--o{ CHUNK : indexes
+ VERSION ||--o{ INGESTION_JOB : processes
+ USER ||--o{ EVALUATION_TASK : queues
+ USER ||--o{ EVALUATION_RUN : owns
+ EVALUATION_TASK }o--o| EVALUATION_RUN : produces

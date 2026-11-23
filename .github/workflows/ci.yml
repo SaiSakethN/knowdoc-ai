@@ -1,0 +1,29 @@
+name: Verify KnowDoc AI
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg18
+        env:
+          POSTGRES_PASSWORD: test-only-ci-password
+          POSTGRES_USER: knowdoc
+          POSTGRES_DB: knowdoc
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U knowdoc" --health-interval 5s --health-timeout 5s --health-retries 15
+    env:
+      DATABASE_URL: postgresql+psycopg://knowdoc:test-only-ci-password@127.0.0.1:5432/knowdoc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: {python-version: '3.12'}
+      - run: uv sync --frozen --extra dev
+      - run: uv run --frozen --extra dev ruff check src tests scripts migrations
+      - run: uv run --frozen --extra dev pytest -q
+      - uses: actions/setup-node@v4
+        with: {node-version: '24', cache: npm, cache-dependency-path: apps/web/package-lock.json}
+      - run: npm ci --prefix apps/web --no-audit --no-fund
+      - run: npm --prefix apps/web run build
+      - name: Build local deployment image
+        run: docker build -t knowdoc-ai:ci .

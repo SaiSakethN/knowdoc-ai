@@ -1,0 +1,9 @@
+flowchart LR
+ Doc[Logical document] --> V1[Immutable source version 1]
+ Doc --> V2[Immutable source version 2]
+ V1 --> G1[Prior index generation]
+ V1 --> G2[Replacement generation]
+ G1 --> Historic[Historical citation resolution]
+ G2 --> Active[Active retrieval generation]
+ V2 --> Compare[Independent passage comparison]
+ V1 --> Compare

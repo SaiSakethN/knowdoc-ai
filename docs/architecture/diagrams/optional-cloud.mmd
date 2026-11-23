@@ -1,0 +1,9 @@
+flowchart TD
+ User[Authenticated user] --> TLS[Future HTTPS ingress]
+ TLS --> App[Web and API]
+ App --> DB[(Private PostgreSQL)]
+ App --> Objects[(Private object storage)]
+ Worker[Private worker] --> DB
+ Worker --> Objects
+ App --> Inference[Approved private inference]
+ Note[Unprovisioned and requires separate approval] -.-> TLS

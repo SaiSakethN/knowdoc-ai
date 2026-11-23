@@ -1,0 +1,19 @@
+{
+  "ollama_models": [
+    {
+      "name": "nomic-embed-text:latest",
+      "digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+      "size": 274302450
+    },
+    {
+      "name": "gemma:2b",
+      "digest": "b50d6c999e592ae4f79acae23b4feaefbdfceaa7cd366df2610e3072c052a160",
+      "size": 1678456656
+    }
+  ],
+  "reranker": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "observed_cached_revisions": [
+    "233902d25c440f23af6f7d6e94d2946bac0bee0a"
+  ],
+  "weights_redistributed": false
+}

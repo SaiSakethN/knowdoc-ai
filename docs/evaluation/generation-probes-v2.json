@@ -1,0 +1,210 @@
+[
+  {
+    "status": "answered",
+    "answer": "The CREATE INDEX command by default creates B-tree indexes.\n\nThe other index types are selected by writing the keyword USING followed by the index type name.",
+    "claims": [
+      {
+        "text": "The CREATE INDEX command by default creates B-tree indexes.",
+        "citation_ids": [
+          "eda499df-9592-4d45-b0ef-4f68637d1999"
+        ],
+        "quote": "PostgreSQL provides several index types:\n   B-tree, Hash, GiST, SP-GiST, GIN, BRIN, and the extension bloom .\n   Each index type uses a different\n   algorithm that is best suited to different types of indexable clauses.",
+        "citation_spans": [
+          {
+            "citation_id": "eda499df-9592-4d45-b0ef-4f68637d1999",
+            "start": 0,
+            "end": 219,
+            "quote": "PostgreSQL provides several index types:\n   B-tree, Hash, GiST, SP-GiST, GIN, BRIN, and the extension bloom .\n   Each index type uses a different\n   algorithm that is best suited to different types of indexable clauses.",
+            "offset_basis": "stored_chunk"
+          }
+        ]
+      },
+      {
+        "text": "The other index types are selected by writing the keyword USING followed by the index type name.",
+        "citation_ids": [
+          "708769ba-a97f-4a1e-958f-80c8f49caff6"
+        ],
+        "quote": "For example, to create a Hash index:",
+        "citation_spans": [
+          {
+            "citation_id": "708769ba-a97f-4a1e-958f-80c8f49caff6",
+            "start": 431,
+            "end": 467,
+            "quote": "For example, to create a Hash index:",
+            "offset_basis": "stored_chunk"
+          }
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "id": "eda499df-9592-4d45-b0ef-4f68637d1999",
+        "document_id": "25bdb7de-8f13-419f-bde8-b408f9036480",
+        "title": "indexes-types",
+        "version_id": "2b295069-ce0d-4154-a21e-43f9c07cba52",
+        "version": "19.0",
+        "text": "PostgreSQL provides several index types:\n   B-tree, Hash, GiST, SP-GiST, GIN, BRIN, and the extension bloom .\n   Each index type uses a different\n   algorithm that is best suited to different types of indexable clauses.\n   By default, the CREATE\n   INDEX command creates\n   B-tree indexes, which fit the most common situations.\n   The other index types are selected by writing the keyword USING followed by the index type name.\n   For example, to create a Hash index:",
+        "quote_hash": "ef6a90bdccf996bf608f88d0e3d8bc149e9fe36f4f63e5e003a8cad9d1df64fe",
+        "location": {
+          "section": "11.2.\u00a0Index Types #",
+          "anchor": null,
+          "section_index": 7,
+          "start": 0,
+          "end": 467,
+          "offset_basis": "normalized_section",
+          "token_count_basis": "word_estimate"
+        },
+        "score": 0.03252247488101534,
+        "source_url": "https://www.postgresql.org/docs/19/indexes-types.html",
+        "retrieved_at": "2026-11-22T03:16:17.547908+00:00",
+        "publication_date": null,
+        "freshness": "version_declared; currentness_not_asserted",
+        "rerank_score": 8.785932540893555
+      },
+      {
+        "id": "708769ba-a97f-4a1e-958f-80c8f49caff6",
+        "document_id": "25bdb7de-8f13-419f-bde8-b408f9036480",
+        "title": "indexes-types",
+        "version_id": "68ec827d-c3b8-4a25-b194-fb1f26be0f30",
+        "version": "18.7",
+        "text": "PostgreSQL provides several index types:\n   B-tree, Hash, GiST, SP-GiST, GIN, BRIN, and the extension bloom .\n   Each index type uses a different\n   algorithm that is best suited to different types of indexable clauses.\n   By default, the CREATE\n   INDEX command creates\n   B-tree indexes, which fit the most common situations.\n   The other index types are selected by writing the keyword USING followed by the index type name.\n   For example, to create a Hash index:",
+        "quote_hash": "ef6a90bdccf996bf608f88d0e3d8bc149e9fe36f4f63e5e003a8cad9d1df64fe",
+        "location": {
+          "section": "11.2.\u00a0Index Types #",
+          "anchor": null,
+          "section_index": 7,
+          "start": 0,
+          "end": 467,
+          "offset_basis": "normalized_section",
+          "token_count_basis": "word_estimate"
+        },
+        "score": 0.03252247488101534,
+        "source_url": "https://www.postgresql.org/docs/18/indexes-types.html",
+        "retrieved_at": "2026-11-22T03:16:06.727542+00:00",
+        "publication_date": null,
+        "freshness": "version_declared; currentness_not_asserted",
+        "rerank_score": 8.785932540893555
+      }
+    ],
+    "conflicts": [],
+    "mode": "generate",
+    "usage": {
+      "input_tokens": 591,
+      "output_tokens": 146,
+      "api_cost_usd": 0,
+      "model": "gemma:2b"
+    },
+    "limitations": [
+      "Retrieval relevance and semantic support are fallible.",
+      "Version labels are declared source metadata; ingestion time does not prove currentness."
+    ],
+    "timings": {
+      "retrieval_ms": 36171.81,
+      "total_ms": 49485.59
+    }
+  },
+  {
+    "status": "answered",
+    "answer": "GIN indexes are the preferred text search index type.\n\n12.9. Preferred Index Types for Text Search",
+    "claims": [
+      {
+        "text": "GIN indexes are the preferred text search index type.",
+        "citation_ids": [
+          "2b3892c5-f332-4792-a04c-5f641d18d469"
+        ],
+        "quote": "GIN indexes are the preferred text search index type.",
+        "citation_spans": [
+          {
+            "citation_id": "2b3892c5-f332-4792-a04c-5f641d18d469",
+            "start": 0,
+            "end": 53,
+            "quote": "GIN indexes are the preferred text search index type.",
+            "offset_basis": "stored_chunk"
+          }
+        ]
+      },
+      {
+        "text": "12.9. Preferred Index Types for Text Search",
+        "citation_ids": [
+          "f469da4b-86cf-43a3-8f8b-0f5c827a2362"
+        ],
+        "quote": "12.9. Preferred Index Types for Text Search",
+        "citation_spans": [
+          {
+            "citation_id": "f469da4b-86cf-43a3-8f8b-0f5c827a2362",
+            "start": 0,
+            "end": 43,
+            "quote": "12.9. Preferred Index Types for Text Search",
+            "offset_basis": "stored_chunk"
+          }
+        ]
+      }
+    ],
+    "citations": [
+      {
+        "id": "2b3892c5-f332-4792-a04c-5f641d18d469",
+        "document_id": "335182f1-4666-4f17-ae80-81cf6e386c32",
+        "title": "textsearch-indexes",
+        "version_id": "f3107610-888b-40d4-b838-fbdce8b4676f",
+        "version": "19.0",
+        "text": "GIN indexes are the preferred text search index type.  As inverted\n   indexes, they contain an index entry for each word (lexeme), with a\n   compressed list of matching locations.  Multi-word searches can find\n   the first match, then use the index to remove rows that are lacking\n   additional words.  GIN indexes store only the words (lexemes) of tsvector values, and not their weight labels.  Thus a table\n   row recheck is needed when using a query that involves weights.",
+        "quote_hash": "85949b125f5f936ead1a18fd472c0d9e7dbbfc948d5ed25c5e58c1351a1ceea7",
+        "location": {
+          "section": "12.9.\u00a0Preferred Index Types for Text Search #",
+          "anchor": null,
+          "section_index": 7,
+          "start": 0,
+          "end": 475,
+          "offset_basis": "normalized_section",
+          "token_count_basis": "word_estimate"
+        },
+        "score": 0.030090497737556562,
+        "source_url": "https://www.postgresql.org/docs/19/textsearch-indexes.html",
+        "retrieved_at": "2026-11-22T03:16:17.638659+00:00",
+        "publication_date": null,
+        "freshness": "version_declared; currentness_not_asserted",
+        "rerank_score": 10.007274627685547
+      },
+      {
+        "id": "f469da4b-86cf-43a3-8f8b-0f5c827a2362",
+        "document_id": "b4ddd77f-ce2e-4576-97be-88d42c2ff9b5",
+        "title": "textsearch",
+        "version_id": "e7cdf4ba-a438-4bba-9910-11418aa2cd26",
+        "version": "19.0",
+        "text": "12.9. Preferred Index Types for Text Search",
+        "quote_hash": "9da74598cb10a00be8598eee4587a47e5b19d213b8313a0d8790f2760bd0daa7",
+        "location": {
+          "section": "Chapter\u00a012.\u00a0Full Text Search",
+          "anchor": null,
+          "section_index": 32,
+          "start": 0,
+          "end": 43,
+          "offset_basis": "normalized_section",
+          "token_count_basis": "word_estimate"
+        },
+        "score": 0.016129032258064516,
+        "source_url": "https://www.postgresql.org/docs/19/textsearch.html",
+        "retrieved_at": "2026-11-22T03:16:17.594989+00:00",
+        "publication_date": null,
+        "freshness": "version_declared; currentness_not_asserted",
+        "rerank_score": 8.882986068725586
+      }
+    ],
+    "conflicts": [],
+    "mode": "generate",
+    "usage": {
+      "input_tokens": 557,
+      "output_tokens": 96,
+      "api_cost_usd": 0,
+      "model": "gemma:2b"
+    },
+    "limitations": [
+      "Retrieval relevance and semantic support are fallible.",
+      "Version labels are declared source metadata; ingestion time does not prove currentness."
+    ],
+    "timings": {
+      "retrieval_ms": 2766.66,
+      "total_ms": 15374.02
+    }
+  }
+]

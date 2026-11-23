@@ -1,0 +1,13 @@
+sequenceDiagram
+ participant U as User
+ participant A as API
+ participant D as Authorized retrieval
+ participant M as Local model
+ U->>A: Question with collection and version filters
+ A->>D: FTS and cosine with ACL predicates
+ D-->>A: Authorized candidates
+ A->>A: RRF optional rerank diversity context
+ A->>M: Untrusted evidence with short aliases
+ M-->>A: Candidate claims and quotes
+ A->>A: Validate stored IDs quotes and recheck grants
+ A-->>U: Supported candidate or explicit abstention

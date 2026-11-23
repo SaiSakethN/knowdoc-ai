@@ -1,0 +1,9 @@
+flowchart TD
+ Snapshot[Captured sources and original fixtures] --> Gold[80 provisional cases and exact quotes]
+ Gold --> Baselines[Keyword dense hybrid hybrid-rerank]
+ Gold --> Pipeline[Bounded generated QA and adversarial checks]
+ Baselines --> Metrics[Recall MRR nDCG latency]
+ Pipeline --> Behavior[Status citation integrity sentinel checks]
+ Metrics --> Report[Persisted report and failure analysis]
+ Behavior --> Report
+ Report --> Review[Human review and release gate remains explicit]

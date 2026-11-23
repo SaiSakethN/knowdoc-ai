@@ -1,0 +1,11 @@
+flowchart TD
+ Browser[React workspace] --> API[FastAPI and sessions]
+ API --> ACL[Ownership and grant checks]
+ ACL --> Retrieval[FTS cosine RRF rerank]
+ Retrieval --> Answer[Evidence selection and local generation]
+ Answer --> Validate[Stored citation validation]
+ Validate --> Browser
+ API --> DB[(PostgreSQL pgvector FTS metadata)]
+ DB --> Worker[Leased worker]
+ Worker --> Parse[Parse chunk embed]
+ Parse --> DB

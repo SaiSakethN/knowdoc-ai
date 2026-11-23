@@ -1,0 +1,9 @@
+flowchart TD
+ Request[Cookie plus CSRF] --> Session[Authenticate and check expiry]
+ Session --> Scope[Owner or document grant SQL predicate]
+ Scope --> Text[Authorized passages only]
+ Text --> Rerank[Reranker and generator]
+ Rerank --> Recheck[Recheck grants after inference]
+ Recheck --> Response[Answer response]
+ Citation[Citation or original request] --> SourceACL[Independent document authorization]
+ SourceACL --> Source[Exact stored source]

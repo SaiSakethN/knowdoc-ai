@@ -1,0 +1,9 @@
+flowchart TD
+ Browser[Loopback browser] --> Web[Vite or built React assets]
+ Web --> API[Host or container API]
+ API --> DB[(Loopback PostgreSQL container)]
+ Worker[Host or container worker] --> DB
+ Worker --> Files[Matching private upload directory or volume]
+ API --> Files
+ API --> Ollama[Host local Ollama]
+ Worker --> Ollama

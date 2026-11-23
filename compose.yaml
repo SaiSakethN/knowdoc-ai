@@ -1,0 +1,65 @@
+name: knowdoc-ai
+services:
+  db:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_USER: knowdoc
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Create .env first}
+      POSTGRES_DB: knowdoc
+    ports: ["127.0.0.1:54329:5432"]
+    volumes: ["postgres:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U knowdoc -d knowdoc"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    mem_limit: 768m
+  api:
+    profiles: ["app"]
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://knowdoc_app:${DATABASE_APP_PASSWORD}@db:5432/knowdoc
+      MIGRATION_DATABASE_URL: postgresql+psycopg://knowdoc:${POSTGRES_PASSWORD}@db:5432/knowdoc
+      OLLAMA_URL: http://host.docker.internal:11434
+      STORAGE_DIR: /app/data/uploads
+      EMBEDDING_BACKEND: ${EMBEDDING_BACKEND:-ollama}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text:latest}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-768}
+      EMBEDDING_DIGEST: ${EMBEDDING_DIGEST:-}
+      GENERATION_MODEL: ${GENERATION_MODEL:-gemma:2b}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://127.0.0.1:5173}
+      OCR_ENABLED: ${OCR_ENABLED:-false}
+    ports: ["127.0.0.1:${API_PORT:-8000}:8000"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    volumes: ["uploads:/app/data/uploads"]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 10
+      start_period: 10s
+    command: ["sh", "-c", "alembic upgrade head && unset MIGRATION_DATABASE_URL && exec uvicorn knowdoc.api:app --host 0.0.0.0 --port 8000"]
+  worker:
+    profiles: ["app"]
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://knowdoc_app:${DATABASE_APP_PASSWORD}@db:5432/knowdoc
+      MIGRATION_DATABASE_URL: ""
+      OLLAMA_URL: http://host.docker.internal:11434
+      STORAGE_DIR: /app/data/uploads
+      EMBEDDING_BACKEND: ${EMBEDDING_BACKEND:-ollama}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text:latest}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-768}
+      EMBEDDING_DIGEST: ${EMBEDDING_DIGEST:-}
+      GENERATION_MODEL: ${GENERATION_MODEL:-gemma:2b}
+      OCR_ENABLED: ${OCR_ENABLED:-false}
+    volumes: ["uploads:/app/data/uploads"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    depends_on:
+      api: {condition: service_healthy}
+    command: ["knowdoc-worker"]
+volumes:
+  postgres:
+  uploads:
