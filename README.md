@@ -1,5 +1,7 @@
 # KnowDoc AI
 
+![KnowDoc AI: Private documents. Inspectable evidence. Explicit limits.](docs/assets/engineering-banner.svg)
+
 Document search and question answering with inspectable citations. Upload a source, ask a question, and open the passage behind the answer, including its version and PDF page.
 
 [Live demo](https://knowdoc-ai.vercel.app) | [Getting started](docs/user-guide.md) | [Architecture](docs/architecture/system-design.md) | [Evaluation results](docs/evaluation-report.md)
@@ -29,6 +31,14 @@ The public demo runs on Vercel and Neon Free. Create an account and upload your 
 | Evaluation | Results can be viewed; benchmark execution disabled | Reproducible local benchmark runs |
 
 General AI generation is disabled in the card-free demo. It does not send documents to an inference provider. The local edition runs Nomic embeddings and Gemma through Ollama. See [cloud limits and operations](docs/cloud-deployment.md).
+
+## Engineering decisions and evaluation boundaries
+
+The hosted edition prioritizes an inspectable, card-free demonstration: keyword retrieval and deterministic supported-profile extraction run without an inference provider. The local edition trades more setup and CPU/model cost for vector retrieval, optional reranking and Ollama generation. These are distinct operating modes, not interchangeable feature claims.
+
+Access checks occur around retrieval and citation resolution, independently of model output filtering. Source versions and exact-span references make answers auditable, but a valid reference alone does not prove a claim is supported.
+
+The [evaluation report](docs/evaluation-report.md) retains failures: plain hybrid underperformed dense retrieval on the developer-authored set, and early generated adversarial outputs included attack text. Focused fixes are regression evidence, not an exhaustive safety rerun. Independent semantic annotation and a full follow-up benchmark remain open.
 
 ## Run locally
 
